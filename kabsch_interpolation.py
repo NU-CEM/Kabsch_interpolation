@@ -112,7 +112,10 @@ def interpolate_structures(start_atoms, end_atoms, molecular_formulas=None,
             atom_translation = (end_atoms[atom_index].position - 
             start_atoms[atom_index].position)
             beta = atom_translation*interval
-            positions[atom_index] = start_atoms[atom_index].position + beta
+            atoms[atom_index].position = start_atoms[atom_index].position + beta
+        
+        # update positions with the interpolated positions
+        positions = atoms.positions
         
         # interpolation along translation and rotation vectors
         for molecule_indices in molecular_indices_list: 
@@ -120,14 +123,11 @@ def interpolate_structures(start_atoms, end_atoms, molecular_formulas=None,
             # ASE atoms object to describe particular molecule
             start_molecule = start_atoms[molecule_indices] 
             end_molecule = end_atoms[molecule_indices] 
-
-            # deepcopy to avoid overwriting start_atoms
-            molecule = deepcopy(start_molecule)
             
             # need to apply minimum image convention to any molecule that may 
             # move between neighbouring unit cells during relaxation
-            if ((np.abs(start_molecule.positions) < mic_cutoff).any() or 
-            (np.abs(end_molecule.positions) < mic_cutoff).any()):                           
+            if (((np.abs(start_molecule.positions) < mic_cutoff).any()) or 
+            ((np.abs(end_molecule.positions) < mic_cutoff).any())):                           
                 start_molecule.set_positions(ase.geometry.geometry.find_mic(
                 	start_molecule.positions, start_atoms.cell)[0])
                 end_molecule.set_positions(ase.geometry.geometry.find_mic(
@@ -146,6 +146,8 @@ def interpolate_structures(start_atoms, end_atoms, molecular_formulas=None,
             alpha = angle * interval
         
             # apply the translation and rotation
+            # deepcopy to avoid overwriting start_atoms
+            molecule = deepcopy(start_molecule)
             molecule.rotate(alpha, axis, center="COM")
             molecule.translate(delta)
             
