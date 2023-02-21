@@ -1,11 +1,11 @@
 # Kabsch interpolation for hybrid materials
 
-<mark>Warning: Always check that the interpolated structures are correct - you can visualise the generated structures using [vesta](https://jp-minerals.org/vesta/en/) or similar.</mark>
+⚠️ Warning: Always check that the interpolated structures are correct - you can visualise the generated structures using [vesta](https://jp-minerals.org/vesta/en/) or similar.
 
 If you use this code please consider:
-- [Citing the associated paper](https://arxiv.org/abs/2302.08412) (currently under review)
+- citing the [associated paper](https://arxiv.org/abs/2302.08412) (currently under review)
 - [Citing the Atomic Simulation Environment](https://wiki.fysik.dtu.dk/ase/faq.html#how-should-i-cite-ase)
-- Letting me know so that I can start a list of where it has been used successfully. I'll link to your project from this page.
+- letting me know so that I can start a list of where it has been used successfully. I'll link to your project from this page.
 
 If you have any questions or comments about this code please contact l.whalley@northumbria.ac.uk or (preferably) raise an issue on the [repository issue tracker](https://github.com/NU-CEM/Kabsch_interpolation/issues). 
 
