@@ -243,6 +243,8 @@ def get_molecule_vectors(molecule_atoms):
     matrix = neighborList.get_connectivity_matrix()
     rows, columns = matrix.nonzero()
     pair_indices = np.column_stack((rows,columns))
+    pair_indices = np.sort(pair_indices)
+    pair_indices = pair_indices[np.lexsort([pair_indices[:, 1], pair_indices[:, 0]])]
 
     return [molecule_atoms.get_distance(i,j,mic=True,vector=True) for i,j in pair_indices]     
 
@@ -268,15 +270,19 @@ def get_translation_indices(atoms, translation_species, molecular_indices_list):
 def start_end_mic(start_atoms,end_atoms):
     """In some cases an atom crosses a cell boundary during relaxation between 
     the start and end structures. Shift positions to ensure minimum image convention."""
+    start_pos = start_atoms.get_scaled_positions()
+    end_pos = end_atoms.get_scaled_positions()
+    
+    forward_cross = start_pos - end_pos > 0.5
+    back_cross = start_pos - end_pos < -0.5
+    
+    new_end_pos = end_pos.copy()
+    new_end_pos[forward_cross] += 1
+    new_end_pos[back_cross] -= 1
 
-    for i,atom in enumerate(start_atoms):
-        for j,position in enumerate(atom.position):
-            if position-end_atoms[i].position[j] > start_atoms.cell.cellpar()[j]/2:
-                start_atoms[i].position[j] = position - start_atoms.cell.cellpar()[j]
-            if end_atoms[i].position[j] - position > start_atoms.cell.cellpar()[j]/2:
-                end_atoms[i].position[j] = (end_atoms[i].position[j] - 
-                	start_atoms.cell.cellpar()[j])
-    return start_atoms, end_atoms
+    new_end_atoms = end_atoms.copy()
+    new_end_atoms.set_scaled_positions(new_end_pos)
+    return start_atoms, new_end_atoms
 
 def main():
     parser = argparse.ArgumentParser(
