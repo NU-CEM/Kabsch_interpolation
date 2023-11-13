@@ -65,7 +65,7 @@ def interpolate_structures(start_atoms, end_atoms, molecular_formulas=None,
     
     mic_cutoff (float) - cutoff distance from edge of unit cell, below which the 
     minimum image convention is applied to any molecule."""
-        
+       
     # need to specify either molecular_formulas (most common use case) or 
     # molecular_indices (for awkward cases where ASE neighbour analysis doesn't work)
     if molecular_formulas is None and molecular_indices is None:
@@ -77,6 +77,8 @@ def interpolate_structures(start_atoms, end_atoms, molecular_formulas=None,
         molecular_formulas = [molecular_formulas]
         
     # need to ensure minimum image convention between start and end structures
+    start_atoms.wrap()
+    end_atoms.wrap()
     start_atoms, end_atoms = start_end_mic(start_atoms, end_atoms)
     
     # get index of every atom that belongs to a rotating molecule.
